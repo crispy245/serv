@@ -71,6 +71,10 @@ For a more advanced example, we can also run the Dining philosophers demo
 ...or... the synchronization example
 
     fusesoc run --target=verilator_tb servant --uart_baudrate=57600 --firmware=$SERV/sw/zephyr_sync.hex --memsize=16384
+    
+Running the Dining Philosophers with AVA and MDU activated: (Requires [MDU](https://github.com/zeeshanrafique23/mdu.git) and [AVA](https://github.com/crispy245/ava-core) installed).
+
+     fusesoc run --target=verilator_tb --flag=mdu --flag=ava servant --uart_baudrate=57600 --firmware=$SERV/sw/zephyr_phil.hex --memsize=32768
 
 Other applications can be tested by compiling and converting to bin and then hex e.g. with makehex.py found in `$SERV/sw`
 
