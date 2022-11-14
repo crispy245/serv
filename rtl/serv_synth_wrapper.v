@@ -109,7 +109,8 @@ module serv_synth_wrapper
        .PRE_REGISTER (PRE_REGISTER),
        .RESET_STRATEGY (RESET_STRATEGY),
        .WITH_CSR (WITH_CSR),
-       .MDU(1'b0))
+       .MDU(1'b0),
+       .AVA(1'b0))
    cpu
      (
       .clk      (clk),

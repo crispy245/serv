@@ -41,7 +41,7 @@ filesets:
       - "!tool_quartus? (servant/servant_ram.v)"
       - servant/servant.v
     file_type : verilogSource
-    depend : [serv, "mdu? (mdu)"]
+    depend : [serv, "mdu? (mdu)", "ava? (ava)"]
 
   cyc1000:
     files:
@@ -466,6 +466,7 @@ targets:
     parameters :
       - RISCV_FORMAL
       - "mdu? (MDU=1)"
+      - "ava? (AVA=1)"
       - firmware
       - memsize
       - signature
@@ -523,6 +524,11 @@ parameters:
   MDU:
     datatype  : int
     description : Enables RISC-V standard M-extension
+    paramtype : vlogdefine
+
+  AVA:
+    datatype  : int
+    description : Enables AVA-Core extension
     paramtype : vlogdefine
 
   SERV_CLEAR_RAM:

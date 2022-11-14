@@ -1,7 +1,8 @@
 `default_nettype none
 module serv_decode
   #(parameter [0:0] PRE_REGISTER = 1,
-    parameter [0:0] MDU = 0)
+    parameter [0:0] MDU = 0,
+    parameter [0:0] AVA = 0)
   (
    input wire        clk,
    //Input
@@ -74,6 +75,7 @@ module serv_decode
    reg       imm30;
 
    wire co_mdu_op     = MDU & (opcode == 5'b01100) & imm25;
+   wire co_ava_op = AVA;
 
    wire co_two_stage_op =
 	~opcode[2] | (funct3[0] & ~funct3[1] & ~opcode[0] & ~opcode[4]) |

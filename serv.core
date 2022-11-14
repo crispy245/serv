@@ -37,6 +37,7 @@ targets:
       - "is_toplevel? (COMPRESSED)"
       - "is_toplevel? (MDU)"
       - "is_toplevel? (PRE_REGISTER)"
+      - "is_toplevel? (AVA)"
       - "is_toplevel? (RESET_STRATEGY)"
       - RISCV_FORMAL
       - SERV_CLEAR_RAM
@@ -63,6 +64,11 @@ parameters:
     datatype   : int
     description: Enables interface for RISC-V standard M-extension
     paramtype  : vlogparam
+
+  AVA:
+    datatype  : int
+    description : Enables AVA-Core extension
+    paramtype : vlogparam
 
   PRE_REGISTER:
     datatype    : int

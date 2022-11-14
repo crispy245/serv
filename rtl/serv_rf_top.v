@@ -15,10 +15,15 @@ module serv_rf_top
        This parameter enables the interface for connecting SERV and MDU
     */
     parameter [0:0] MDU = 0,
+    /* AVA Core
+       This parameter enables the interface for connecting SERV and AVA
+    */
+    parameter [0:0] AVA = 0,
     /* Register signals before or after the decoder
        0 : Register after the decoder. Faster but uses more resources
        1 : (default) Register before the decoder. Slower but uses less resources
      */
+    
     parameter PRE_REGISTER = 1,
     /* Amount of reset applied to design
        "NONE" : No reset at all. Relies on a POR to set correct initialization
@@ -143,6 +148,7 @@ module serv_rf_top
        .RESET_STRATEGY (RESET_STRATEGY),
        .WITH_CSR (WITH_CSR),
        .MDU(MDU),
+       .AVA(AVA),
        .COMPRESSED(COMPRESSED),
        .ALIGN(ALIGN))
    cpu

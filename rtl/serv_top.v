@@ -6,6 +6,7 @@ module serv_top
     parameter RESET_STRATEGY = "MINI",
     parameter RESET_PC = 32'd0,
     parameter [0:0] MDU = 1'b0,
+    parameter [0:0] AVA = 1'b0,
     parameter [0:0] COMPRESSED=0,
     parameter [0:0] ALIGN = 0)
    (
@@ -224,7 +225,8 @@ module serv_top
      #(.RESET_STRATEGY (RESET_STRATEGY),
        .WITH_CSR (WITH_CSR[0:0]),
        .MDU(MDU),
-       .ALIGN(ALIGN))
+       .ALIGN(ALIGN),
+       .AVA(AVA))
    state
      (
       .i_clk (clk),
@@ -280,7 +282,8 @@ module serv_top
 
    serv_decode
      #(.PRE_REGISTER (PRE_REGISTER),
-       .MDU(MDU))
+       .MDU(MDU),
+       .AVA(AVA))
    decode
      (
       .clk (clk),
@@ -365,7 +368,8 @@ module serv_top
       .i_wb_rdt     (i_wb_rdt[31:7]));
 
    serv_bufreg
-      #(.MDU(MDU))
+      #(.MDU(MDU),
+        .AVA(AVA))
    bufreg
      (
       .i_clk    (clk),
