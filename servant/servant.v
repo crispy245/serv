@@ -161,6 +161,9 @@ module servant
   `ifdef MDU
        .MDU(1),
   `endif 
+  `ifdef AVA
+       .AVA(1),
+  `endif 
        .WITH_CSR (with_csr),
        .COMPRESSED(compress),
        .ALIGN(align))
@@ -231,4 +234,51 @@ module servant
     assign mdu_rd = 32'b0;
 `endif
 
+`ifdef AVA
+    accelerator_top ava_serv
+    (
+      .clk(wb_clk),
+      .n_reset(wb_rst),
+      .apu_req(),
+      .apu_operands_i(),
+      .apu_op(),
+      .apu_flags_i(),
+      .data_gnt_i(),
+      .data_rvalid_i(wb_mem_cyc),
+      .apu_result(),
+      .apu_flags_o(),
+      .apu_gnt(),
+      .apu_rvalid(),
+      .data_req_o(),
+      .data_we_o(),
+      .data_be_o(),
+      .data_rdata_i(wb_mem_rdt),
+      .data_addr_o(wb_mem_adr),
+      .data_wdata_o(wb_mem_dat),
+      .core_halt_o());
+`endif
+
 endmodule
+
+/* wb_ibus_adr are instrs 
+
+output logic  [31:0] apu_result,
+    output logic  [4:0]  apu_flags_o,
+    output logic         apu_gnt,
+    output logic         apu_rvalid,
+    input  wire         clk,
+    input  wire         n_reset,
+    input  wire         apu_req,
+    input  wire  [2:0][31:0] apu_operands_i,
+    input  wire  [5:0]  apu_op,
+    input  wire  [14:0] apu_flags_i,
+    output wire         data_req_o,
+    input  wire         data_gnt_i,
+    input  wire         data_rvalid_i,
+    output wire         data_we_o,
+    output wire  [3:0]  data_be_o,
+    output wire  [31:0] data_addr_o,
+    output wire  [31:0] data_wdata_o,
+    input  wire  [31:0] data_rdata_i,
+    output wire         core_halt_o
+*/
