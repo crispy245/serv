@@ -14,6 +14,8 @@ module serv_mem_if
    input wire 	     i_half,
    //MDU
    input wire 	     i_mdu_op,
+   //AVA
+   input wire        i_ava_op,
    //Data
    input wire 	     i_bufreg2_q,
    output wire 	     o_rd,
@@ -37,7 +39,8 @@ module serv_mem_if
        (!i_bytecnt[1] & !i_lsb[0])     |
        (!i_bytecnt[0] & !i_lsb[1]);
 
-   wire dat_valid =
+   wire dat_valid = 
+  i_ava_op |
 	i_mdu_op |
 	i_word |
 	(i_bytecnt == 2'b00) |

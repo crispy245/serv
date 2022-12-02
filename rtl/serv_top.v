@@ -69,7 +69,10 @@ module serv_top
    output wire [31:0] o_ext_rs1,
    output wire [31:0] o_ext_rs2,
    //MDU
-   output wire        o_mdu_valid);
+   output wire        o_mdu_valid,
+   //AVA
+   output wire        o_ava_valid
+   );
 
    wire [4:0]    rd_addr;
    wire [4:0]    rs1_addr;
@@ -89,6 +92,7 @@ module serv_top
    wire 	 slt_or_branch;
    wire 	 rd_op;
    wire   mdu_op;
+   wire   ava_op;
 
    wire 	 rd_alu_en;
    wire 	 rd_csr_en;
@@ -267,8 +271,12 @@ module serv_top
       //MDU
       .i_mdu_op       (mdu_op),
       .o_mdu_valid    (o_mdu_valid),
+      //AVA
+      .i_ava_op       (ava_op),
+      .o_ava_valid    (o_ava_valid),
       //Extension
       .i_mdu_ready    (i_ext_ready),
+      .i_ava_ready    (i_ext_ready),
       //External
       .o_dbus_cyc     (o_dbus_cyc),
       .i_dbus_ack     (i_dbus_ack),
@@ -303,6 +311,8 @@ module serv_top
       .o_sh_right         (sh_right),
       .o_mdu_op           (mdu_op),
       .o_two_stage_op     (two_stage_op),
+      //AVA
+      .o_ava_op           (ava_op),
       //Extension
       .o_ext_funct3       (o_ext_funct3),
 
@@ -379,6 +389,7 @@ module serv_top
       .i_en     (bufreg_en),
       .i_init   (init),
       .i_mdu_op (mdu_op),
+      .i_ava_op (ava_op),
       .o_lsb    (lsb),
       //Control
       .i_sh_signed (bufreg_sh_signed),
@@ -527,6 +538,7 @@ module serv_top
       .o_misalign   (mem_misalign),
       //Control
       .i_mdu_op     (mdu_op),
+      .i_ava_op     (ava_op),
       .i_signed     (mem_signed),
       .i_word       (mem_word),
       .i_half       (mem_half),
@@ -649,7 +661,7 @@ module serv_top
 `endif
 
 generate
-  if (MDU) begin
+  if (MDU || AVA) begin
     assign dbus_rdt = i_ext_ready ? i_ext_rd:i_dbus_rdt;
     assign dbus_ack = i_dbus_ack | i_ext_ready;
   end else begin

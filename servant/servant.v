@@ -61,6 +61,9 @@ module servant
    wire [31:0] mdu_rd;
    wire        mdu_ready;
 
+   wire       ava_ready;
+   wire       ava_valid;
+
    servant_arbiter arbiter
      (.i_wb_cpu_dbus_adr (wb_dmem_adr),
       .i_wb_cpu_dbus_dat (wb_dmem_dat),
@@ -208,15 +211,17 @@ module servant
       .o_dbus_cyc   (wb_dbus_cyc),
       .i_dbus_rdt   (wb_dbus_rdt),
       .i_dbus_ack   (wb_dbus_ack),
-      
+
       //Extension
       .o_ext_rs1    (mdu_rs1),
       .o_ext_rs2    (mdu_rs2),
       .o_ext_funct3 (mdu_op),
       .i_ext_rd     (mdu_rd),
-      .i_ext_ready  (mdu_ready),
+      .i_ext_ready  (mdu_ready | ava_ready),
       //MDU
-      .o_mdu_valid  (mdu_valid));
+      .o_mdu_valid  (mdu_valid),
+      //AVA
+      .o_ava_valid  (ava_valid));
 
 `ifdef MDU
     mdu_top mdu_serv
@@ -235,17 +240,28 @@ module servant
 `endif
 
 `ifdef AVA
+    wire [2:0][31:0] ava_instr;
+    assign ava_instr[0] = wb_ibus_rdt;
+    reg core_halt;
+    reg prev_core_halt;
+    reg ava_done;
+    always @(posedge wb_clk) begin
+      prev_core_halt <= core_halt;
+    end
+
+    assign ava_ready = core_halt & ~prev_core_halt;
+      
     accelerator_top ava_serv
     (
       .clk(wb_clk),
       .n_reset(wb_rst),
-      .apu_req(),
-      .apu_operands_i(),
+      .apu_req(ava_valid),
+      .apu_operands_i(ava_instr),
       .apu_op(),
       .apu_flags_i(),
       .data_gnt_i(),
       .data_rvalid_i(wb_mem_cyc),
-      .apu_result(),
+      .apu_result(mdu_rd),
       .apu_flags_o(),
       .apu_gnt(),
       .apu_rvalid(),
@@ -255,7 +271,7 @@ module servant
       .data_rdata_i(wb_mem_rdt),
       .data_addr_o(wb_mem_adr),
       .data_wdata_o(wb_mem_dat),
-      .core_halt_o());
+      .core_halt_o(core_halt));
 `endif
 
 endmodule

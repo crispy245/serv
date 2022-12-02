@@ -42,9 +42,13 @@ module serv_state
    input wire 	     i_rd_op,
    //MDU
    input wire 	     i_mdu_op,
-   output wire 	     o_mdu_valid,
+   output wire 	  o_mdu_valid,
+   //AVA
+   input wire       i_ava_op,
+   output wire      o_ava_valid,
    //Extension
    input wire 	     i_mdu_ready,
+   input wire 	     i_ava_ready,
    //External
    output wire 	     o_dbus_cyc,
    input wire 	     i_dbus_ack,
@@ -90,11 +94,14 @@ module serv_state
    //valid signal for mdu
    assign o_mdu_valid = MDU & !o_cnt_en & init_done & i_mdu_op;
 
+   //valid signal for ava
+   assign o_ava_valid = AVA & !o_cnt_en & init_done & i_ava_op;
+
    //Prepare RF for writes when everything is ready to enter stage two
    // and the first stage didn't cause a misalign exception
    assign o_rf_wreq = !misalign_trap_sync & !o_cnt_en & init_done &
 	   	      ((i_shift_op & (i_sh_done | !i_sh_right)) |
-	   	       i_dbus_ack | (MDU & i_mdu_ready) |
+	   	       i_dbus_ack | (MDU & i_mdu_ready) | (AVA & i_ava_ready) |	
 	   	       i_slt_or_branch);
 
    assign o_dbus_cyc = !o_cnt_en & init_done & i_dbus_en & !i_mem_misalign;

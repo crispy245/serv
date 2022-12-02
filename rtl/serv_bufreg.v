@@ -9,6 +9,7 @@ module serv_bufreg #(
    input wire 	      i_en,
    input wire 	      i_init,
    input wire           i_mdu_op,
+   input wire           i_ava_op,
    output wire [1:0]    o_lsb,
    //Control
    input wire 	      i_rs1_en,
@@ -47,6 +48,6 @@ module serv_bufreg #(
    assign o_q = lsb[0] & i_en;
    assign o_dbus_adr = {data, 2'b00};
    assign o_ext_rs1  = {o_dbus_adr[31:2],lsb};
-   assign o_lsb = (MDU & i_mdu_op) ? 2'b00 : lsb;
+   assign o_lsb = ((MDU & i_mdu_op) || (AVA & i_ava_op) ) ? 2'b00 : lsb;
 
 endmodule

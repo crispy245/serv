@@ -81,7 +81,8 @@ module serv_rf_top
    input  wire [31:0] i_ext_rd,
    input  wire        i_ext_ready,
    // MDU
-   output wire        o_mdu_valid);
+   output wire        o_mdu_valid,
+   output wire        o_ava_valid);
    
    localparam CSR_REGS = WITH_CSR*4;
 
@@ -213,7 +214,9 @@ module serv_rf_top
       .o_ext_rs1    (o_ext_rs1),
       .o_ext_rs2    (o_ext_rs2),
       //MDU
-      .o_mdu_valid  (o_mdu_valid));
+      .o_mdu_valid  (o_mdu_valid),
+      //AVA
+      .o_ava_valid  (o_ava_valid));
 
 endmodule
 `default_nettype wire

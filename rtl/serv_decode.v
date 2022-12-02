@@ -22,6 +22,8 @@ module serv_decode
    output reg       o_dbus_en,
    //MDU
    output reg       o_mdu_op,
+   //AVA
+   output reg o_ava_op,
    //Extension
    output reg [2:0] o_ext_funct3,
    //To bufreg
@@ -75,19 +77,19 @@ module serv_decode
    reg       imm30;
 
    wire co_mdu_op     = MDU & (opcode == 5'b01100) & imm25;
-   wire co_ava_op = AVA;
+   wire co_ava_op = AVA & (opcode[2:0] == 3'b111);
 
    wire co_two_stage_op =
 	~opcode[2] | (funct3[0] & ~funct3[1] & ~opcode[0] & ~opcode[4]) |
-	(funct3[1] & ~funct3[2] & ~opcode[0] & ~opcode[4]) | co_mdu_op;
-   wire co_shift_op = (opcode[2] & ~funct3[1]) & !co_mdu_op;
-   wire co_slt_or_branch = (opcode[4] | (funct3[1] & opcode[2]) | (imm30 & opcode[2] & opcode[3] & ~funct3[2])) & !co_mdu_op;
+	(funct3[1] & ~funct3[2] & ~opcode[0] & ~opcode[4]) | co_mdu_op | co_ava_op;
+   wire co_shift_op = (opcode[2] & ~funct3[1]) & !co_mdu_op & !co_ava_op;
+   wire co_slt_or_branch = (opcode[4] | (funct3[1] & opcode[2]) | (imm30 & opcode[2] & opcode[3] & ~funct3[2])) & !co_mdu_op & !co_ava_op;
    wire co_branch_op = opcode[4];
    wire co_dbus_en    = ~opcode[2] & ~opcode[4];
    wire co_mtval_pc   = opcode[4];   
    wire co_mem_word   = funct3[1];
-   wire co_rd_alu_en  = !opcode[0] & opcode[2] & !opcode[4] & !co_mdu_op;
-   wire co_rd_mem_en  = (!opcode[2] & !opcode[0]) | co_mdu_op;
+   wire co_rd_alu_en  = !opcode[0] & opcode[2] & !opcode[4] & !co_mdu_op & !co_ava_op;
+   wire co_rd_mem_en  = (!opcode[2] & !opcode[0]) | co_mdu_op | co_ava_op;
    wire [2:0] co_ext_funct3 = funct3;
 
    //jal,branch =     imm
@@ -248,6 +250,8 @@ module serv_decode
                op22   <= i_wb_rdt[22];
                op26   <= i_wb_rdt[26];
             end
+         
+            
          end
 
          always @(*) begin
@@ -264,6 +268,7 @@ module serv_decode
             o_slt_or_branch    = co_slt_or_branch;
             o_rd_op            = co_rd_op;
             o_mdu_op           = co_mdu_op;
+            o_ava_op           = co_ava_op;
             o_ext_funct3       = co_ext_funct3;
             o_bufreg_rs1_en    = co_bufreg_rs1_en;
             o_bufreg_imm_en    = co_bufreg_imm_en;
@@ -326,6 +331,7 @@ module serv_decode
                o_slt_or_branch    <= co_slt_or_branch;
                o_rd_op            <= co_rd_op;
                o_mdu_op           <= co_mdu_op;
+               o_ava_op           <= co_ava_op;
                o_ext_funct3       <= co_ext_funct3;
                o_bufreg_rs1_en    <= co_bufreg_rs1_en;
                o_bufreg_imm_en    <= co_bufreg_imm_en;
